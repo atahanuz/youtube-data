@@ -34,6 +34,7 @@ def get_video_description(video_id):
 
 
 
+
 def get_data_from_id(video_id):
     video_url = f"https://www.youtube.com/watch?v={video_id}"
     video = YouTube(video_url)
@@ -55,7 +56,7 @@ def get_data_from_id(video_id):
         'transcript_text': text,
     }
 
-def search_youtube_videos(keyword, max_results=2):
+def search_youtube_videos(keyword, max_results=2,truncate=False):
     search_response = youtube.search().list(
         q=keyword,
         type='video',
@@ -87,38 +88,46 @@ def search_youtube_videos(keyword, max_results=2):
         externaldata=get_data_from_id(video_id)
         video.update(externaldata)
         video['link']=f"https://www.youtube.com/watch?v={video_id}"
+
+        video['title'] = video.pop('title')
+        video['video_id'] = video.pop('video_id')
+        video['link'] = video.pop('link')
+        video['channel_title'] = video.pop('channel')
+        video['view_count'] = video.pop('view_count')
+        video['publish_date'] = video.pop('date')
+        video['like_count'] = video.pop('like_count')
+        video['description'] = video.pop('description')
+        video['thumbnail_url'] = video.pop('thumbnail')
+        video['rating'] = video.pop('rating')
+        video['transcript_text'] = video.pop('transcript_text')
+
         videos.append(video)
 
+
+
+    if truncate:
+        for result in videos:
+            for key, value in result.items():
+                if isinstance(value, str):
+                    result[key] = value[:100] + '...' if len(value) > 100 else value
 
     return videos
 
 
-if __name__ == '__main__':
-
-    # Example usage
-    search_results = search_youtube_videos('Felsefe', 5)
-
-    #trim each string to 100 characters
-    for result in search_results:
-        for key, value in result.items():
-            if isinstance(value, str):
-                result[key] = value[:100] + '...' if len(value) > 100 else value
-
-    for result in search_results:
-        #rearrange keys
-        result['title'] = result.pop('title')
-        result['video_id'] = result.pop('video_id')
-        result['link'] = result.pop('link')
-        result['channel_title'] = result.pop('channel')
-        result['view_count'] = result.pop('view_count')
-        result['publish_date'] = result.pop('date')
-        result['like_count'] = result.pop('like_count')
-        result['description'] = result.pop('description')
-        result['thumbnail_url'] = result.pop('thumbnail')
-        result['rating'] = result.pop('rating')
-        result['transcript_text'] = result.pop('transcript_text')
-
-    for result in search_results:
+def print_result(results):
+    for result in results:
         print("------")
         for key, value in result.items():
             print(f"{key}: {value}")
+
+def save_result(results,filename):
+    import json
+    with open(filename, 'w',encoding='utf-8') as outfile:
+        json.dump(results, outfile,default=str,ensure_ascii=False,indent=4)
+
+
+if __name__ == '__main__':
+
+
+    results = search_youtube_videos('Felsefe', 2)
+    save_result(results,"results.json")
