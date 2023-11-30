@@ -129,5 +129,7 @@ def save_result(results,filename):
 if __name__ == '__main__':
 
 
-    results = search_youtube_videos('Felsefe', 2)
-    save_result(results,"results.json")
+    # Set truncate=True to truncate strings to 100 characters
+    results = search_youtube_videos('Felsefe', 3,truncate=False)
+    #print_result(results)
+    #save_result(results,"results.json")
