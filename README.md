@@ -5,9 +5,9 @@
 ```python
 results = search_youtube_videos('Felsefe', 3,truncate=False)
 ```
-First argument: String to search in youtube
-Second argument: Number of videos to get
-Third argument: Truncate the results to 100 characters if set True
+First argument: String to search in youtube <br>
+Second argument: Number of videos to get <br>
+Third argument: Truncate the results to 100 characters if set True <br>
 
 After obtaining the results, you can print or save them to a json file.
 ```python
